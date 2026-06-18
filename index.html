@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B-FIT Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Tajawal', sans-serif; background: #0a0a0a; color: #f0f0f0; direction: rtl; }
+
+/* LAYOUT */
+.sidebar {
+  position: fixed; top: 0; right: 0; bottom: 0;
+  width: 220px; background: #111; border-left: 1px solid rgba(255,255,255,0.08);
+  display: flex; flex-direction: column; z-index: 10; overflow-y: auto;
+}
+.content { margin-right: 220px; min-height: 100vh; }
+
+/* LOGO */
+.logo { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 10px; }
+.logo-icon { width: 36px; height: 36px; background: #1DB954; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.logo-name { font-size: 18px; font-weight: 800; color: #fff; }
+.logo-sub { font-size: 10px; color: #888; }
+
+/* MONTH NAV */
+.month-nav { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.month-label { font-size: 10px; color: #555; margin-bottom: 6px; }
+.month-controls { display: flex; gap: 4px; align-items: center; }
+.month-btn { background: none; border: 1px solid rgba(255,255,255,0.08); color: #888; width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.month-btn:hover { color: #fff; }
+.month-name { flex: 1; text-align: center; background: #222; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 5px; font-size: 12px; font-weight: 700; color: #fff; cursor: pointer; font-family: 'Tajawal', sans-serif; }
+.month-name:hover { border-color: #1DB954; }
+
+/* SAVE INDICATOR */
+.save-ind { margin: 6px 10px; padding: 5px 10px; background: #1a1a1a; border-radius: 6px; font-size: 10px; color: #555; display: flex; align-items: center; gap: 5px; }
+.save-dot { width: 6px; height: 6px; border-radius: 50%; background: #1DB954; flex-shrink: 0; }
+
+/* NAV */
+.nav { padding: 8px; flex: 1; }
+.nav-btn {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 9px 11px; border-radius: 7px;
+  background: none; border: none; color: #888; font-size: 13px; font-weight: 500;
+  cursor: pointer; font-family: 'Tajawal', sans-serif; text-align: right;
+  margin-bottom: 2px; transition: all 0.15s;
+}
+.nav-btn:hover { background: #222; color: #f0f0f0; }
+.nav-btn.active { background: rgba(29,185,84,0.12); color: #1DB954; }
+.nav-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+/* TOPBAR */
+.topbar {
+  position: sticky; top: 0; background: rgba(10,10,10,0.95);
+  backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 12px 22px; display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; z-index: 5;
+}
+.topbar-left { display: flex; align-items: center; gap: 10px; }
+.page-title { font-size: 15px; font-weight: 700; color: #fff; }
+.month-badge { font-size: 11px; color: #1DB954; background: rgba(29,185,84,0.1); border: 1px solid rgba(29,185,84,0.2); border-radius: 99px; padding: 2px 10px; font-weight: 600; }
+.topbar-right { display: flex; align-items: center; gap: 8px; }
+.search-wrap { display: flex; align-items: center; gap: 6px; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); border-radius: 7px; padding: 6px 10px; }
+.search-wrap svg { width: 13px; height: 13px; color: #555; flex-shrink: 0; }
+.search-wrap input { background: none; border: none; outline: none; color: #f0f0f0; font-size: 12px; font-family: 'Tajawal', sans-serif; width: 130px; direction: rtl; }
+.search-wrap input::placeholder { color: #555; }
+
+/* BUTTONS */
+.btn { display: inline-flex; align-items: center; gap: 5px; padding: 7px 14px; border-radius: 7px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; font-family: 'Tajawal', sans-serif; transition: all 0.15s; white-space: nowrap; }
+.btn svg { width: 13px; height: 13px; }
+.btn-green { background: #1DB954; color: #fff; }
+.btn-green:hover { background: #158a3e; }
+.btn-gray { background: #222; color: #888; border: 1px solid rgba(255,255,255,0.08); }
+.btn-gray:hover { color: #f0f0f0; }
+.btn-blue { background: rgba(74,144,226,0.1); color: #4a90e2; border: 1px solid rgba(74,144,226,0.25); }
+.btn-red { background: rgba(255,77,77,0.1); color: #ff4d4d; border: 1px solid rgba(255,77,77,0.2); }
+.btn-amber { background: rgba(245,166,35,0.1); color: #f5a623; border: 1px solid rgba(245,166,35,0.25); }
+.btn-sm { padding: 3px 8px; font-size: 11px; }
+
+/* PAGES */
+.page { padding: 22px; display: none; }
+.page.active { display: block; }
+
+/* STATS */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 20px; }
+.stat { background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); border-radius: 11px; padding: 14px 16px; position: relative; overflow: hidden; }
+.stat::before { content: ''; position: absolute; top: 0; right: 0; width: 3px; height: 100%; background: #1DB954; border-radius: 0 11px 11px 0; }
+.stat.blue::before { background: #4a90e2; }
+.stat.red::before { background: #ff4d4d; }
+.stat.amber::before { background: #f5a623; }
+.stat-label { font-size: 11px; color: #888; margin-bottom: 4px; }
+.stat-value { font-size: 22px; font-weight: 800; color: #fff; line-height: 1; }
+.stat-sub { font-size: 10px; color: #555; margin-top: 3px; }
+
+/* CARD */
+.card { background: #111; border: 1px solid rgba(255,255,255,0.08); border-radius: 11px; overflow: hidden; margin-bottom: 16px; }
+.card-header { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.card-title { font-size: 13px; font-weight: 700; color: #fff; }
+.card-count { font-size: 11px; color: #888; }
+
+/* TABS */
+.tabs { display: flex; gap: 3px; margin-bottom: 14px; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); border-radius: 7px; padding: 3px; width: fit-content; }
+.tab { padding: 5px 13px; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer; color: #888; border: none; background: none; font-family: 'Tajawal', sans-serif; transition: all 0.15s; }
+.tab.active { background: #1DB954; color: #fff; }
+.tab:hover:not(.active) { color: #f0f0f0; }
+
+/* TABLE */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th { padding: 8px 11px; text-align: right; font-size: 10px; font-weight: 600; color: #555; background: #1a1a1a; border-bottom: 1px solid rgba(255,255,255,0.08); }
+td { padding: 9px 11px; font-size: 12px; border-bottom: 1px solid rgba(255,255,255,0.08); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,0.02); }
+.player-name { font-weight: 600; color: #fff; font-size: 13px; }
+.player-phone { font-size: 10px; color: #555; direction: ltr; text-align: right; }
+.badge { display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 99px; font-size: 10px; font-weight: 700; }
+.badge-u8 { background: rgba(74,144,226,0.15); color: #6eb4f7; }
+.badge-u10 { background: rgba(29,185,84,0.15); color: #25d267; }
+.badge-u13 { background: rgba(245,166,35,0.15); color: #f5a623; }
+.badge-paid { background: rgba(29,185,84,0.1); color: #1DB954; border: 1px solid rgba(29,185,84,0.2); }
+.badge-unpaid { background: rgba(255,77,77,0.1); color: #ff4d4d; border: 1px solid rgba(255,77,77,0.2); }
+.day-badge { display: inline-flex; align-items: center; padding: 2px 6px; border-radius: 99px; font-size: 10px; font-weight: 700; background: rgba(74,144,226,0.12); color: #6eb4f7; border: 1px solid rgba(74,144,226,0.2); margin: 1px; }
+.att-dot { width: 17px; height: 17px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; margin: 1px; }
+.att-p { background: rgba(29,185,84,0.2); color: #1DB954; border: 1px solid rgba(29,185,84,0.3); }
+.att-a { background: rgba(255,77,77,0.15); color: #ff4d4d; border: 1px solid rgba(255,77,77,0.25); }
+.att-n { background: #222; border: 1px dashed rgba(255,255,255,0.08); color: #555; }
+.renew-btn { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 99px; font-size: 10px; font-weight: 700; cursor: pointer; border: 1px solid rgba(245,166,35,0.3); background: rgba(245,166,35,0.1); color: #f5a623; font-family: 'Tajawal', sans-serif; }
+.row-actions { display: flex; gap: 4px; align-items: center; }
+.empty { padding: 36px; text-align: center; color: #555; font-size: 13px; }
+
+/* SCHEDULE */
+.sched-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.sched-card { background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); border-radius: 11px; padding: 14px; }
+.sched-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.sched-day-row { display: flex; align-items: center; justify-content: space-between; background: #222; border-radius: 5px; padding: 5px 9px; margin-bottom: 4px; font-size: 12px; }
+
+/* SESSION */
+.session-card { background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); border-radius: 11px; margin-bottom: 10px; overflow: hidden; }
+.session-header { padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.session-body { padding: 10px 14px; }
+
+/* MODAL */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+.modal-overlay.open { display: flex; }
+.modal { background: #111; border: 1px solid rgba(255,255,255,0.14); border-radius: 13px; padding: 22px; width: 100%; max-width: 460px; max-height: 90vh; overflow-y: auto; }
+.modal-lg { max-width: 620px; }
+.modal-sm { max-width: 340px; }
+.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.modal-header h2 { font-size: 15px; font-weight: 800; color: #fff; }
+.modal-close { background: #222; border: 1px solid rgba(255,255,255,0.08); color: #888; width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; flex-shrink: 0; }
+.modal-close:hover { color: #fff; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group.span2 { grid-column: 1 / -1; }
+.form-group label { font-size: 11px; font-weight: 600; color: #888; }
+.form-group input, .form-group select { background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); border-radius: 7px; padding: 8px 10px; color: #f0f0f0; font-size: 13px; font-family: 'Tajawal', sans-serif; outline: none; direction: rtl; width: 100%; }
+.form-group input:focus, .form-group select:focus { border-color: #1DB954; }
+.form-group select option { background: #1a1a1a; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+.amount-row { display: flex; align-items: center; gap: 6px; }
+.amount-row input { flex: 1; }
+.currency { font-size: 11px; color: #888; font-weight: 600; white-space: nowrap; }
+
+/* DAYS PICKER */
+.days-picker { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 5px; }
+.day-pick { padding: 7px 3px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); background: #1a1a1a; color: #888; font-size: 11px; font-weight: 600; cursor: pointer; text-align: center; font-family: 'Tajawal', sans-serif; transition: all 0.15s; }
+.day-pick.selected { background: rgba(74,144,226,0.2); color: #6eb4f7; border-color: rgba(74,144,226,0.4); }
+
+/* ATT LIST */
+.att-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.att-row:last-child { border-bottom: none; }
+.att-name { font-size: 12px; font-weight: 600; color: #fff; }
+.att-cat { font-size: 10px; color: #555; }
+.att-btns { display: flex; gap: 5px; }
+.att-btn { padding: 3px 10px; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid rgba(255,255,255,0.08); background: #1a1a1a; color: #888; font-family: 'Tajawal', sans-serif; transition: all 0.15s; }
+.att-btn.present { background: rgba(29,185,84,0.15); color: #1DB954; border-color: rgba(29,185,84,0.3); }
+.att-btn.absent { background: rgba(255,77,77,0.15); color: #ff4d4d; border-color: rgba(255,77,77,0.3); }
+
+/* MONTH PICKER */
+.mpick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-top: 12px; }
+.mpick-btn { padding: 8px; border-radius: 7px; border: 1px solid rgba(255,255,255,0.08); background: #1a1a1a; color: #888; font-size: 11px; font-weight: 600; cursor: pointer; text-align: center; font-family: 'Tajawal', sans-serif; transition: all 0.15s; }
+.mpick-btn:hover { border-color: #1DB954; color: #1DB954; }
+.mpick-btn.current { background: rgba(29,185,84,0.15); color: #1DB954; border-color: rgba(29,185,84,0.4); }
+.year-nav { display: flex; align-items: center; justify-content: center; gap: 14px; }
+.year-btn { background: none; border: 1px solid rgba(255,255,255,0.08); color: #888; width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+.year-btn:hover { color: #fff; }
+.year-val { font-size: 16px; font-weight: 800; color: #fff; }
+
+/* REPORTS */
+.report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.report-card { background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); border-radius: 11px; padding: 16px; }
+.report-card h3 { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+.bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.bar-label { font-size: 10px; color: #888; width: 55px; flex-shrink: 0; }
+.bar-track { flex: 1; background: #222; border-radius: 99px; height: 6px; overflow: hidden; }
+.bar-fill { height: 100%; background: #1DB954; border-radius: 99px; }
+.bar-val { font-size: 10px; color: #888; width: 30px; text-align: left; flex-shrink: 0; }
+.fee-row { display: flex; gap: 10px; margin-bottom: 12px; }
+.fee-box { flex: 1; background: #222; border-radius: 7px; padding: 10px; text-align: center; }
+.fee-num { font-size: 18px; font-weight: 800; color: #fff; }
+.fee-lbl { font-size: 10px; color: #555; }
+
+/* SIDEBAR FOOTER */
+.sidebar-footer { padding: 10px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 10px; color: #555; display: flex; align-items: center; gap: 6px; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: #1DB954; color: #fff; padding: 8px 18px; border-radius: 7px; font-size: 12px; font-weight: 700; z-index: 9999; opacity: 0; transition: opacity 0.3s; pointer-events: none; font-family: 'Tajawal', sans-serif; white-space: nowrap; }
+.toast.show { opacity: 1; }
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .content { margin-right: 0; }
+  .sched-grid { grid-template-columns: 1fr; }
+  .report-grid { grid-template-columns: 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="logo">
+    <div class="logo-icon">&#9917;</div>
+    <div>
+      <div class="logo-name">B-FIT</div>
+      <div class="logo-sub">ACADEMY</div>
+    </div>
+  </div>
+  <div class="month-nav">
+    <div class="month-label">الشهر</div>
+    <div class="month-controls">
+      <button class="month-btn" onclick="prevMonth()">&#8250;</button>
+      <button class="month-name" id="month-display" onclick="openMonthPicker()">—</button>
+      <button class="month-btn" onclick="nextMonth()">&#8249;</button>
+    </div>
+  </div>
+  <div class="save-ind"><div class="save-dot"></div><span id="save-txt">البيانات محفوظة تلقائياً</span></div>
+  <nav class="nav">
+    <button class="nav-btn active" onclick="showPage('dash')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>لوحة التحكم</button>
+    <button class="nav-btn" onclick="showPage('players')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>اللاعبون</button>
+    <button class="nav-btn" onclick="showPage('sched')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>الجدول الأسبوعي</button>
+    <button class="nav-btn" onclick="showPage('att')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>الحضور</button>
+    <button class="nav-btn" onclick="showPage('fees')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>الرسوم</button>
+    <button class="nav-btn" onclick="showPage('rep')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>التقارير</button>
+    <button class="nav-btn" onclick="showPage('admin')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>إدارة الأكاديمية</button>
+  </nav>
+  <div class="sidebar-footer"><div class="save-dot"></div>B-FIT Academy</div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="page-title" id="page-title">لوحة التحكم</span>
+      <span class="month-badge" id="month-badge"></span>
+    </div>
+    <div class="topbar-right">
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="search" placeholder="بحث..." oninput="onSearch()">
+      </div>
+      <button class="btn btn-blue" onclick="exportExcel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Excel</button>
+      <button class="btn btn-green" onclick="openAddPlayer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>إضافة لاعب</button>
+    </div>
+  </div>
+
+  <!-- PAGES -->
+  <div class="page active" id="page-dash">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;">
+      <div><div style="font-size:20px;font-weight:800;color:#fff;">B-FIT &#128075;</div><div style="font-size:12px;color:#888;margin-top:3px;" id="today-date"></div></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-gray" onclick="showPage('att')">تسجيل حضور</button>
+        <button class="btn btn-amber btn-sm" id="renew-alert" style="display:none" onclick="showPage('fees')">&#9888; تجديد معلق</button>
+      </div>
+    </div>
+    <div class="stats" id="dash-stats"></div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">لاعبو الشهر</span><span class="card-count" id="dash-count"></span></div>
+      <div class="table-wrap" id="dash-table"></div>
+    </div>
+  </div>
+
+  <div class="page" id="page-players">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+      <div><div style="font-size:20px;font-weight:800;color:#fff;">اللاعبون</div><div style="font-size:12px;color:#888;margin-top:2px;" id="players-sub"></div></div>
+      <button class="btn btn-gray" onclick="openAttModal()">تسجيل حضور</button>
+    </div>
+    <div class="tabs" id="cat-tabs"></div>
+    <div class="card">
+      <div class="card-header"><span class="card-title" id="players-title">جميع اللاعبين</span><span class="card-count" id="players-count"></span></div>
+      <div class="table-wrap" id="players-table"></div>
+    </div>
+  </div>
+
+  <div class="page" id="page-sched">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+      <div><div style="font-size:20px;font-weight:800;color:#fff;">الجدول الأسبوعي</div><div style="font-size:12px;color:#888;margin-top:2px;">يومي التدريب لكل فئة</div></div>
+    </div>
+    <div class="sched-grid" id="sched-grid"></div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">جلسات الشهر</span><span class="card-count" id="sched-count"></span></div>
+      <div class="table-wrap" id="sched-table"></div>
+    </div>
+  </div>
+
+  <div class="page" id="page-att">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+      <div><div style="font-size:20px;font-weight:800;color:#fff;">الحضور</div><div style="font-size:12px;color:#888;margin-top:2px;" id="att-sub"></div></div>
+      <button class="btn btn-green" onclick="openAttModal()">+ جلسة جديدة</button>
+    </div>
+    <div class="tabs" id="att-tabs"></div>
+    <div id="sessions-list"></div>
+  </div>
+
+  <div class="page" id="page-fees">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+      <div><div style="font-size:20px;font-weight:800;color:#fff;">الرسوم الشهرية</div><div style="font-size:12px;color:#888;margin-top:2px;" id="fees-sub"></div></div>
+    </div>
+    <div class="tabs" id="fees-tabs"></div>
+    <div id="fees-body"></div>
+  </div>
+
+  <div class="page" id="page-admin">
+    <div style="margin-bottom:16px;"><div style="font-size:20px;font-weight:800;color:#fff;">إدارة الأكاديمية</div><div style="font-size:12px;color:#888;margin-top:2px;">الملاعب والمصاريف</div></div>
+    <div id="admin-body"></div>
+  </div>
+  <div class="page" id="page-rep">
+    <div style="margin-bottom:16px;"><div style="font-size:20px;font-weight:800;color:#fff;">التقارير</div><div style="font-size:12px;color:#888;margin-top:2px;" id="rep-sub"></div></div>
+    <div class="report-grid" id="rep-body"></div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-add">
+  <div class="modal">
+    <div class="modal-header"><h2 id="modal-add-title">إضافة لاعب</h2><div class="modal-close" onclick="closeModal('modal-add')">&#10005;</div></div>
+    <div class="form-grid">
+      <div class="form-group span2"><label>الاسم الكامل</label><input id="f-name" placeholder="محمد علي..."></div>
+      <div class="form-group"><label>الفئة</label><select id="f-cat" onchange="updateSchedPreview()"><option value="U8">U8</option><option value="U10">U10</option><option value="U13">U13</option></select></div>
+      <div class="form-group"><label>العمر</label><input id="f-age" type="number" placeholder="8"></div>
+      <div class="form-group"><label>تاريخ الميلاد</label><input id="f-dob" placeholder="1/6/2017"></div>
+      <div class="form-group"><label>رقم ولي الأمر</label><input id="f-pno" placeholder="3XXXXXXX"></div>
+      <div class="form-group"><label>شهر التسجيل</label><select id="f-month"></select></div>
+      <div class="form-group span2"><label>جدول فئة <span id="sched-preview-label" style="color:#4a90e2"></span></label><div id="sched-preview" style="margin-top:5px;display:flex;gap:4px;flex-wrap:wrap;"></div></div>
+      <div class="form-group span2"><label>رسوم الاشتراك (BD)</label><div class="amount-row"><input id="f-amount" type="number" step="0.5" placeholder="20"><span class="currency">BD</span></div></div>
+      <div class="form-group span2"><label>حالة الدفع</label><select id="f-paid"><option value="0">لم يدفع</option><option value="1">دفع ✓</option></select></div>
+      <div class="form-group"><label>رسوم التوصيل (BD)</label><div class="amount-row"><input id="f-delivery" type="number" step="0.5" placeholder="0"><span class="currency">BD</span></div></div>
+      <div class="form-group"><label>حالة دفع التوصيل</label><select id="f-delivery-paid"><option value="0">لم يدفع</option><option value="1">دفع ✓</option></select></div>
+      <div class="form-group"><label>رسوم الملابس (BD)</label><div class="amount-row"><input id="f-clothes" type="number" step="0.5" placeholder="0"><span class="currency">BD</span></div></div>
+      <div class="form-group"><label>حالة دفع الملابس</label><select id="f-clothes-paid"><option value="0">لم يدفع</option><option value="1">دفع ✓</option></select></div>
+    </div>
+    <div class="modal-actions"><button class="btn btn-gray" onclick="closeModal('modal-add')">إلغاء</button><button class="btn btn-green" onclick="savePlayer()">حفظ</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-sched">
+  <div class="modal modal-sm">
+    <div class="modal-header"><h2 id="modal-sched-title">تعديل أيام الفئة</h2><div class="modal-close" onclick="closeModal('modal-sched')">&#10005;</div></div>
+    <p style="font-size:11px;color:#888;margin-bottom:12px;">اختر أيام التدريب في الأسبوع (حتى 3 أيام)</p>
+    <div class="days-picker" id="days-picker"></div>
+    <div class="modal-actions"><button class="btn btn-gray" onclick="closeModal('modal-sched')">إلغاء</button><button class="btn btn-green" onclick="saveSchedule()">حفظ</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-att">
+  <div class="modal modal-lg">
+    <div class="modal-header"><h2>تسجيل حضور</h2><div class="modal-close" onclick="closeModal('modal-att')">&#10005;</div></div>
+    <div class="form-grid" style="margin-bottom:10px;">
+      <div class="form-group"><label>التاريخ</label><input type="date" id="att-date" onchange="onAttDateChange()"></div>
+      <div class="form-group"><label>الفئة</label><select id="att-cat" onchange="renderAttList()"><option value="all">الكل</option><option value="U8">U8</option><option value="U10">U10</option><option value="U13">U13</option></select></div>
+    </div>
+    <div id="att-day-info" style="font-size:11px;color:#f5a623;margin-bottom:8px;min-height:15px;"></div>
+    <div style="display:flex;gap:6px;margin-bottom:10px;">
+      <button class="btn btn-gray btn-sm" onclick="markAll('p')">✓ تحضير الكل</button>
+      <button class="btn btn-gray btn-sm" onclick="markAll('a')">&#10005; تغيب الكل</button>
+    </div>
+    <div id="att-list" style="max-height:300px;overflow-y:auto;"></div>
+    <div class="modal-actions"><button class="btn btn-gray" onclick="closeModal('modal-att')">إلغاء</button><button class="btn btn-green" onclick="saveAttendance()">حفظ</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-month">
+  <div class="modal modal-sm">
+    <div class="modal-header"><h2>اختر الشهر</h2><div class="modal-close" onclick="closeModal('modal-month')">&#10005;</div></div>
+    <div class="year-nav"><button class="year-btn" onclick="pickerYear(-1)">&#8250;</button><div class="year-val" id="picker-year"></div><button class="year-btn" onclick="pickerYear(1)">&#8249;</button></div>
+    <div class="mpick-grid" id="month-picker-grid"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-renew">
+  <div class="modal modal-sm">
+    <div class="modal-header"><h2 id="modal-renew-title">تجديد</h2><div class="modal-close" onclick="closeModal('modal-renew')">&#10005;</div></div>
+    <div id="modal-renew-body"></div>
+    <div class="modal-actions"><button class="btn btn-gray" onclick="closeModal('modal-renew')">إلغاء</button><button class="btn btn-green" onclick="confirmRenew()">تأكيد</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+const MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const DAYS   = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const DAYS3  = DAYS.map(d => d.slice(0,3));
+
+// helpers
+const $ = id => document.getElementById(id);
+function mkey(y,m){ return y+'-'+String(m+1).padStart(2,'0'); }
+function mpk(k){ const [y,m]=k.split('-'); return {y:+y,m:+m-1}; }
+function mlabel(k){ const {y,m}=mpk(k); return MONTHS[m]+' '+y; }
+function nextMkey(k){ const {y,m}=mpk(k); return m===11?mkey(y+1,0):mkey(y,m+1); }
+function prevMkey(k){ const {y,m}=mpk(k); return m===0?mkey(y-1,11):mkey(y,m-1); }
+function today(){ return new Date().toISOString().split('T')[0]; }
+function catClass(c){ return c==='U8'?'badge-u8':c==='U10'?'badge-u10':'badge-u13'; }
+
+// state
+const NOW = new Date();
+let curMonth = mkey(NOW.getFullYear(), NOW.getMonth());
+let picYear  = NOW.getFullYear();
+let curPage  = 'dash';
+let catTab   = 'all';
+let feesTab  = 'all';
+let attTab   = 'all';
+let editId   = null;
+let schedCat = null;
+let schedDays= [];
+let tmpAtt   = {};
+let renewTarget = null;
+let nextId   = 500;
+
+// data
+let fields = {courtsPerDay:{}}; // courts booked per date
+let schedule = { U8:[1,3,5], U10:[0,2,4], U13:[0,2,4] };
+let months   = {}; // months[key] = {pids:[], fees:{id:{paid,amount}}, att:{date:{id:'p'|'a'}}}
+let players  = [];
+
+function getMonth(k){
+  if(!months[k]) months[k]={pids:[],fees:{},att:{}};
+  return months[k];
+}
+function monthPlayers(k){ return getMonth(k).pids.map(id=>players.find(p=>p.id===id)).filter(Boolean); }
+function getPlayer(id){ return players.find(p=>p.id===id); }
+
+// Schedule helpers
+function schedDates(mkey2, cat){
+  const {y,m}=mpk(mkey2); const days=schedule[cat]||[];
+  const r=[]; const d=new Date(y,m,1);
+  while(d.getMonth()===m){ if(days.includes(d.getDay())) r.push(d.toISOString().split('T')[0]); d.setDate(d.getDate()+1); }
+  return r;
+}
+function allSchedDates(mkey2){
+  const s=new Set();
+  ['U8','U10','U13'].forEach(c=>schedDates(mkey2,c).forEach(d=>s.add(d)));
+  return [...s].sort();
+}
+function catsForDate(mkey2,ds){ return ['U8','U10','U13'].filter(c=>schedDates(mkey2,c).includes(ds)); }
+
+// SEED DATA
+const SEED = [
+{id:1,name:'محمد اسامة',cat:'U8',age:6,dob:'',pno:'39910109',amt:20},
+{id:2,name:'مهدي حسنين علي',cat:'U8',age:7,dob:'16/9/2017',pno:'33339849',amt:20},
+{id:3,name:'حسين مشيمع',cat:'U8',age:6,dob:'2/4/2017',pno:'36144460',amt:20},
+{id:4,name:'إلياس حسين التاجر',cat:'U8',age:5,dob:'',pno:'39121311',amt:20},
+{id:5,name:'ياسين فاضل التاجر',cat:'U8',age:7,dob:'16/4/2017',pno:'39532859',amt:20},
+{id:6,name:'حسن احمد حسن',cat:'U8',age:7,dob:'24/2/2019',pno:'66664554',amt:20},
+{id:7,name:'نوح جاسم المقداد',cat:'U8',age:8,dob:'3/3/2017',pno:'36777801',amt:20},
+{id:8,name:'علي حسنين العصفور',cat:'U8',age:7,dob:'22/2/2018',pno:'36554115',amt:20},
+{id:9,name:'رضا ابراهيم عبدالنبي',cat:'U8',age:9,dob:'1/9/2016',pno:'33377644',amt:20},
+{id:10,name:'محمد حسين الناصر',cat:'U8',age:7,dob:'12/5/2017',pno:'33733660',amt:20},
+{id:11,name:'احمد هيثم نصيب',cat:'U8',age:6,dob:'22/6/2018',pno:'32222680',amt:20},
+{id:12,name:'منصور عدنان المنصور',cat:'U8',age:7,dob:'',pno:'39996875',amt:20},
+{id:13,name:'علي هشام الماجد',cat:'U8',age:8,dob:'',pno:'33947799',amt:20},
+{id:14,name:'عماد عيسى الوزان',cat:'U8',age:3,dob:'',pno:'39946493',amt:20},
+{id:15,name:'خليل عيسى الوزان',cat:'U8',age:8,dob:'',pno:'',amt:20},
+{id:16,name:'عبدالله امير محمد',cat:'U8',age:0,dob:'31/3/2021',pno:'36221313',amt:20},
+{id:17,name:'حسين ضياء',cat:'U8',age:7,dob:'11/1/2017',pno:'39991192',amt:20},
+{id:18,name:'عبدالعزيز محمد عبدالله',cat:'U8',age:0,dob:'5/3/2019',pno:'39774471',amt:20},
+{id:19,name:'علي حبيب راشد',cat:'U8',age:0,dob:'28/9/2017',pno:'36030119',amt:20},
+{id:20,name:'عبدالعزيز حسين نصيف',cat:'U8',age:4,dob:'',pno:'36332032',amt:20},
+{id:21,name:'عبدالعزيز عمار',cat:'U8',age:4,dob:'',pno:'33446776',amt:20},
+{id:22,name:'ادم ابراهيم الخضر',cat:'U8',age:7,dob:'25/6/2018',pno:'36399940',amt:20},
+{id:23,name:'محمود اسماعيل',cat:'U8',age:6,dob:'',pno:'37364214',amt:20},
+{id:24,name:'محمد حسين المطوع',cat:'U8',age:6,dob:'1/10/2018',pno:'36694270',amt:20},
+{id:25,name:'سيد محمد زراره',cat:'U8',age:6,dob:'',pno:'39461504',amt:20},
+{id:26,name:'حسين علي خليل',cat:'U8',age:6,dob:'',pno:'37774609',amt:20},
+{id:27,name:'امير جعفر عبدالعزيز',cat:'U8',age:7,dob:'28/4/2017',pno:'36999544',amt:20},
+{id:28,name:'علي محمد جميل',cat:'U8',age:7,dob:'',pno:'33096440',amt:20},
+{id:29,name:'عادل محمد الدوسري',cat:'U8',age:4,dob:'',pno:'33028741',amt:20},
+{id:30,name:'مهدي عبدالله مهدي',cat:'U8',age:8,dob:'',pno:'32323503',amt:20},
+{id:31,name:'علي ميثم علي حماد',cat:'U8',age:8,dob:'',pno:'38385230',amt:20},
+{id:32,name:'إلياس جاسم',cat:'U8',age:7,dob:'',pno:'39997619',amt:20},
+{id:33,name:'عبدالعزيز عيسى رمضان',cat:'U8',age:6,dob:'',pno:'38888145',amt:20},
+{id:34,name:'احمد حسين الشهابي',cat:'U8',age:8,dob:'',pno:'39787874',amt:20},
+{id:35,name:'إبراهيم محمد فوزي',cat:'U8',age:7,dob:'',pno:'33144825',amt:20},
+{id:36,name:'سيد علي حسن كاظم',cat:'U8',age:8,dob:'',pno:'33960333',amt:20},
+{id:37,name:'حسين سامي',cat:'U10',age:9,dob:'29/1/2015',pno:'36362950',amt:20},
+{id:38,name:'سيد علي حسين الوادعي',cat:'U10',age:9,dob:'25/7/2015',pno:'37776544',amt:20},
+{id:39,name:'علي حسن خلف',cat:'U10',age:9,dob:'3/5/2015',pno:'36366462',amt:20},
+{id:40,name:'يوسف هيثم نصيب',cat:'U10',age:9,dob:'3/9/2015',pno:'32222680',amt:20},
+{id:41,name:'حسن علي حيدر',cat:'U10',age:10,dob:'16/1/2015',pno:'33461116',amt:20},
+{id:42,name:'قاسم حسين شاكر',cat:'U10',age:10,dob:'1/10/2016',pno:'36362950',amt:20},
+{id:43,name:'علي حبيب',cat:'U10',age:10,dob:'13/2/2015',pno:'33323966',amt:20},
+{id:44,name:'حسن جعفر عبدالحسين',cat:'U10',age:10,dob:'28/12/2014',pno:'39975333',amt:20},
+{id:45,name:'سيد هاشم سيد حسين',cat:'U10',age:9,dob:'13/4/2015',pno:'33239799',amt:20},
+{id:46,name:'محمد عبد الرسول',cat:'U10',age:10,dob:'7/12/2014',pno:'39797555',amt:20},
+{id:47,name:'يوسف فاضل التاجر',cat:'U10',age:9,dob:'13/1/2016',pno:'39532859',amt:20},
+{id:48,name:'جعفر عبدالله مشميع',cat:'U10',age:9,dob:'12/5/2015',pno:'33393955',amt:20},
+{id:49,name:'علي حسين الحبيشي',cat:'U10',age:0,dob:'13/5/2015',pno:'36000045',amt:20},
+{id:50,name:'حسن محمد الشيخ',cat:'U10',age:9,dob:'',pno:'33022520',amt:20},
+{id:51,name:'يعقوب بهاء يعقوب',cat:'U10',age:9,dob:'',pno:'39442366',amt:7.5},
+{id:52,name:'عيسى حسين المرزوق',cat:'U10',age:9,dob:'',pno:'33903000',amt:20},
+{id:53,name:'أحمد إسماعيل',cat:'U10',age:8,dob:'',pno:'37364214',amt:20},
+{id:54,name:'حسن علي الشمروخ',cat:'U10',age:9,dob:'',pno:'33066602',amt:20},
+{id:55,name:'عمر محمد فوزي',cat:'U10',age:10,dob:'',pno:'33144825',amt:20},
+{id:56,name:'محمد فراس الجمري',cat:'U10',age:10,dob:'',pno:'39000673',amt:20},
+{id:57,name:'محمد مصطفى جعفر',cat:'U10',age:9,dob:'',pno:'39572474',amt:20},
+{id:58,name:'فارس وسام الراشد',cat:'U10',age:10,dob:'',pno:'33405030',amt:20},
+{id:59,name:'محمود اسامة',cat:'U13',age:10,dob:'13/12/2014',pno:'39910109',amt:20},
+{id:60,name:'احمد محمد حسن',cat:'U13',age:12,dob:'15/1/2013',pno:'33372223',amt:20},
+{id:61,name:'علي حسن الحداد',cat:'U13',age:11,dob:'2/10/2013',pno:'39993434',amt:20},
+{id:62,name:'عبدالله محمد عبدالله',cat:'U13',age:0,dob:'22/10/2013',pno:'39774471',amt:20},
+{id:63,name:'عباس محمد عباس',cat:'U13',age:0,dob:'27/3/2013',pno:'',amt:20},
+{id:64,name:'علي حسين نصيف',cat:'U13',age:13,dob:'',pno:'36332032',amt:20},
+{id:65,name:'علي عبدالجليل',cat:'U13',age:11,dob:'',pno:'39605756',amt:20},
+{id:66,name:'عبدالله عمار',cat:'U13',age:11,dob:'',pno:'33446776',amt:20},
+{id:67,name:'علي حسين المرزوق',cat:'U13',age:13,dob:'',pno:'33903000',amt:20},
+{id:68,name:'سيف سامي علي',cat:'U13',age:11,dob:'23/12/2012',pno:'34384669',amt:20},
+{id:69,name:'محمد عباس الزاكي',cat:'U13',age:11,dob:'',pno:'36161691',amt:20},
+{id:70,name:'احمد عمار',cat:'U13',age:11,dob:'',pno:'33143146',amt:20},
+{id:71,name:'علي عبدالمجيد منصوري',cat:'U13',age:13,dob:'',pno:'39635767',amt:20},
+{id:72,name:'ناصر احمد الناصر',cat:'U13',age:12,dob:'',pno:'39932355',amt:20},
+{id:73,name:'مراد مصطفى المعارج',cat:'U13',age:12,dob:'6/6/2013',pno:'39400909',amt:20},
+{id:74,name:'محمد جعفر عبدالعزيز',cat:'U13',age:12,dob:'11/2/2013',pno:'36999544',amt:20},
+{id:75,name:'احمد علي الحايكي',cat:'U13',age:11,dob:'',pno:'36655573',amt:20},
+{id:76,name:'محمد يونس المطوع',cat:'U13',age:13,dob:'',pno:'36699044',amt:20},
+{id:77,name:'بدر يونس المطوع',cat:'U13',age:11,dob:'',pno:'',amt:20},
+{id:78,name:'محمد جاسم زيد',cat:'U13',age:12,dob:'13/3/2013',pno:'33222180',amt:20},
+{id:79,name:'بدر حسين عقيل',cat:'U13',age:11,dob:'13/8/2013',pno:'36288880',amt:20},
+{id:80,name:'علي حسين المطوع',cat:'U13',age:11,dob:'1/6/2013',pno:'36694270',amt:20},
+{id:81,name:'ادم انيس',cat:'U13',age:12,dob:'14/6/2012',pno:'34345834',amt:20},
+{id:82,name:'علي صلاح البحراني',cat:'U13',age:13,dob:'28/9/2012',pno:'33733735',amt:20},
+{id:83,name:'عبدالله عيسى رمضان',cat:'U13',age:11,dob:'',pno:'38888145',amt:20},
+{id:84,name:'راكان حسن مسعد',cat:'U13',age:0,dob:'18/12/2012',pno:'33870745',amt:20},
+{id:85,name:'فيصل محمد فيصل',cat:'U13',age:10,dob:'',pno:'39910109',amt:20},
+{id:86,name:'عبدالله ياسر',cat:'U13',age:0,dob:'',pno:'36680995',amt:20},
+{id:87,name:'عباس هشام الإسكافي',cat:'U13',age:0,dob:'28/10/2013',pno:'39898531',amt:20},
+{id:88,name:'ميثم هاني',cat:'U13',age:0,dob:'29/6/2013',pno:'66337667',amt:20},
+];
+
+// LOCALSTORAGE
+const LS_KEY = 'bfit_v4';
+function lsSave(){
+  try { localStorage.setItem(LS_KEY, JSON.stringify({schedule,months,players,nextId,fields})); $('save-txt').textContent='محفوظ ✓ '+new Date().toLocaleTimeString('ar'); } catch(e){}
+}
+function lsLoad(){
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if(raw){ const d=JSON.parse(raw); schedule=d.schedule; months=d.months; players=d.players; nextId=d.nextId||500; if(d.fields)fields=d.fields; return true; }
+  } catch(e){}
+  return false;
+}
+
+function initData(){
+  players = SEED.map(p=>({...p, defaultAmt: p.amt, delivery:0, deliveryPaid:false, clothes:0, clothesPaid:false}));
+  months = {};
+  const m0 = getMonth(curMonth);
+  m0.pids = players.map(p=>p.id);
+  players.forEach(p=>{ m0.fees[p.id]={paid:false,amount:p.amt}; });
+  m0.fees[51] = {paid:true,amount:7.5};
+}
+
+if(!lsLoad()) initData();
+
+// TOAST
+function showToast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+
+// MODALS
+function openModal(id){ $(id).classList.add('open'); }
+function closeModal(id){ $(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(el=>{
+  el.addEventListener('click', e=>{ if(e.target===el) el.classList.remove('open'); });
+});
+
+// MONTH NAV
+function updateMonthDisplay(){
+  const lbl = mlabel(curMonth);
+  $('month-display').textContent = lbl;
+  $('month-badge').textContent = lbl;
+}
+function prevMonth(){ curMonth=prevMkey(curMonth); updateMonthDisplay(); render(); }
+function nextMonth(){ curMonth=nextMkey(curMonth); updateMonthDisplay(); render(); }
+function openMonthPicker(){ picYear=mpk(curMonth).y; renderPickerGrid(); openModal('modal-month'); }
+function pickerYear(d){ picYear+=d; renderPickerGrid(); }
+function renderPickerGrid(){
+  $('picker-year').textContent = picYear;
+  const {y,m}=mpk(curMonth);
+  $('month-picker-grid').innerHTML = MONTHS.map((n,i)=>
+    `<button class="mpick-btn${picYear===y&&i===m?' current':''}" onclick="selectMonth(${picYear},${i})">${n}</button>`
+  ).join('');
+}
+function selectMonth(y,m){ curMonth=mkey(y,m); updateMonthDisplay(); closeModal('modal-month'); render(); }
+
+// PAGE NAV
+const PAGE_TITLES = {dash:'لوحة التحكم',players:'اللاعبون',sched:'الجدول الأسبوعي',att:'الحضور',fees:'الرسوم الشهرية',rep:'التقارير',admin:'إدارة الأكاديمية'};
+function showPage(p){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('active'));
+  $('page-'+p).classList.add('active');
+  document.querySelectorAll('.nav-btn')[['dash','players','sched','att','fees','rep','admin'].indexOf(p)].classList.add('active');
+  $('page-title').textContent = PAGE_TITLES[p];
+  curPage=p; render();
+}
+function onSearch(){ render(); }
+function render(){
+  if(curPage==='dash') renderDash();
+  else if(curPage==='players'){ renderCatTabs(); renderPlayers(); }
+  else if(curPage==='sched') renderSched();
+  else if(curPage==='att'){ renderAttTabs(); renderSessions(); }
+  else if(curPage==='fees'){ renderFeesTabs(); renderFees(); }
+  else if(curPage==='rep') renderRep();
+  else if(curPage==='admin') renderAdmin();
+}
+
+// DASHBOARD
+function renderDash(){
+  $('today-date').textContent = new Date().toLocaleDateString('ar-BH',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const md=getMonth(curMonth), list=monthPlayers(curMonth);
+  const paid=list.filter(p=>md.fees[p.id]&&md.fees[p.id].paid).length;
+  const bd=list.reduce((s,p)=>s+(md.fees[p.id]&&md.fees[p.id].paid?(md.fees[p.id].amount||0):0),0);
+  const nk=nextMkey(curMonth), nm=months[nk];
+  const needRenew=list.filter(p=>!nm||!nm.pids.includes(p.id)).length;
+  $('renew-alert').style.display=needRenew>0?'inline-flex':'none';
+  $('dash-stats').innerHTML=
+    `<div class="stat"><div class="stat-label">لاعبو الشهر</div><div class="stat-value">${list.length}</div><div class="stat-sub">${mlabel(curMonth)}</div></div>`+
+    `<div class="stat blue"><div class="stat-label">دفعوا</div><div class="stat-value">${paid}</div></div>`+
+    `<div class="stat red"><div class="stat-label">لم يدفعوا</div><div class="stat-value">${list.length-paid}</div></div>`+
+    `<div class="stat amber"><div class="stat-label">تجديد معلق</div><div class="stat-value">${needRenew}</div></div>`+
+    `<div class="stat"><div class="stat-label">محصّل</div><div class="stat-value" style="font-size:17px">${bd.toFixed(3)}</div><div class="stat-sub">BD</div></div>`;
+  const q=($('search').value||'').toLowerCase();
+  const disp=q?list.filter(p=>p.name.includes(q)):list.slice(0,12);
+  $('dash-count').textContent=list.length+' لاعب';
+  $('dash-table').innerHTML=buildTable(disp,false);
+}
+
+// PLAYERS
+function renderCatTabs(){
+  const list=monthPlayers(curMonth);
+  $('cat-tabs').innerHTML=[{k:'all',l:'الكل'},{k:'U8',l:'U8'},{k:'U10',l:'U10'},{k:'U13',l:'U13'}].map(t=>
+    `<button class="tab${catTab===t.k?' active':''}" onclick="setCatTab('${t.k}')">${t.l} <small style="opacity:.6">(${t.k==='all'?list.length:list.filter(p=>p.cat===t.k).length})</small></button>`
+  ).join('');
+}
+function setCatTab(c){ catTab=c; renderCatTabs(); renderPlayers(); }
+function renderPlayers(){
+  const list=monthPlayers(curMonth);
+  const q=($('search').value||'').toLowerCase();
+  const fl=list.filter(p=>(catTab==='all'||p.cat===catTab)&&(!q||p.name.includes(q)||(p.pno||'').includes(q)));
+  $('players-sub').textContent=list.length+' لاعب — '+mlabel(curMonth);
+  $('players-title').textContent={all:'جميع اللاعبين',U8:'فئة U8',U10:'فئة U10',U13:'فئة U13'}[catTab];
+  $('players-count').textContent=fl.length+' لاعب';
+  $('players-table').innerHTML=buildTable(fl,true);
+}
+
+function buildTable(list,actions){
+  const md=getMonth(curMonth), nk=nextMkey(curMonth), nm=months[nk];
+  if(!list.length) return '<div class="empty">لا يوجد لاعبون</div>';
+  let h='<div class="table-wrap"><table><thead><tr><th>#</th><th>اللاعب</th><th>الفئة</th><th>الجدول</th><th>الحضور</th><th>الرسوم</th><th>المبلغ</th>'+(actions?'<th>إجراء</th>':'')+'</tr></thead><tbody>';
+  list.forEach((p,i)=>{
+    const fee=md.fees[p.id]||{paid:false,amount:p.defaultAmt};
+    const sd=schedDates(curMonth,p.cat), att=md.att||{};
+    const dots=sd.map(d=>{ const s=att[d]&&att[d][p.id]; return `<span class="att-dot ${s==='p'?'att-p':s==='a'?'att-a':'att-n'}">${s==='p'?'✓':s==='a'?'✗':''}</span>`; }).join('');
+    const prs=sd.filter(d=>att[d]&&att[d][p.id]==='p').length;
+    const tot=sd.filter(d=>att[d]&&att[d][p.id]).length;
+    const dch=(schedule[p.cat]||[]).map(d=>`<span class="day-badge">${DAYS3[d]}</span>`).join('');
+    const inNext=nm&&nm.pids.includes(p.id);
+    h+=`<tr>
+      <td style="color:#555;font-size:10px">${i+1}</td>
+      <td><div class="player-name">${p.name}</div>${p.pno?`<div class="player-phone">${p.pno}</div>`:''}</td>
+      <td><span class="badge ${catClass(p.cat)}">${p.cat}</span></td>
+      <td>${dch||'<span style="font-size:10px;color:#555">—</span>'}</td>
+      <td><div>${dots||'<span style="font-size:10px;color:#555">لا جلسات</span>'}</div>${tot?`<div style="font-size:10px;color:#888;margin-top:2px">${prs}/${tot} · ${Math.round(prs/tot*100)}%</div>`:''}</td>
+      <td>${fee.paid?'<span class="badge badge-paid">دفع ✓</span>':`<button class="btn btn-red btn-sm" onclick="toggleFee(${p.id})">لم يدفع</button>`}</td>
+      <td style="font-size:11px;color:${fee.paid?'#1DB954':'#888'}">${fee.amount?fee.amount.toFixed(3)+' BD':'—'}</td>
+      ${actions?`<td><div class="row-actions">${inNext?'<span style="font-size:10px;color:#1DB954">✓ مجدد</span>':`<button class="renew-btn" onclick="openRenew(${p.id})">🔄</button>`}<button class="btn btn-gray btn-sm" onclick="editPlayer(${p.id})">✏</button><button class="btn btn-red btn-sm" onclick="removePlayer(${p.id})">✕</button></div></td>`:''}
+    </tr>`;
+  });
+  h+='</tbody></table></div>';
+  return h;
+}
+
+// SCHEDULE
+function renderSched(){
+  $('sched-grid').innerHTML=['U8','U10','U13'].map(cat=>{
+    const days=schedule[cat]||[], sd=schedDates(curMonth,cat);
+    return `<div class="sched-card">
+      <div class="sched-card-header"><span class="badge ${catClass(cat)}">${cat}</span><button class="btn btn-gray btn-sm" onclick="editSchedule('${cat}')">تعديل</button></div>
+      ${days.length?days.map(d=>`<div class="sched-day-row"><span style="color:#f0f0f0">${DAYS[d]}</span><span style="color:#555;font-size:10px">${sd.filter(s=>new Date(s).getDay()===d).length} جلسة</span></div>`).join(''):'<div style="color:#555;font-size:11px;padding:5px 0">لم تحدد أيام</div>'}
+      <div style="margin-top:8px;font-size:10px;color:#888">${sd.length} جلسة هذا الشهر</div>
+    </div>`;
+  }).join('');
+  const all=allSchedDates(curMonth);
+  $('sched-count').textContent=all.length+' جلسة';
+  $('sched-table').innerHTML=all.length?
+    `<table><thead><tr><th>#</th><th>التاريخ</th><th>اليوم</th><th>الفئات</th></tr></thead><tbody>${all.map((d,i)=>{
+      const cs=catsForDate(curMonth,d);
+      return `<tr><td style="color:#555;font-size:10px">${i+1}</td><td style="font-weight:600">${d}</td><td style="color:#888">${DAYS[new Date(d).getDay()]}</td><td>${cs.map(c=>`<span class="badge ${catClass(c)}" style="margin-left:3px">${c}</span>`).join('')}</td></tr>`;
+    }).join('')}</tbody></table>`:'<div class="empty">حدد أيام التدريب أولاً</div>';
+}
+function editSchedule(cat){
+  schedCat=cat; schedDays=[...(schedule[cat]||[])];
+  $('modal-sched-title').textContent='أيام فئة '+cat;
+  renderDaysPicker(); openModal('modal-sched');
+}
+function renderDaysPicker(){
+  $('days-picker').innerHTML=DAYS.map((n,i)=>
+    `<button class="day-pick${schedDays.includes(i)?' selected':''}" onclick="toggleDay(${i})">${n}</button>`
+  ).join('');
+}
+function toggleDay(d){
+  if(schedDays.includes(d)) schedDays=schedDays.filter(x=>x!==d);
+  else{ if(schedDays.length>=3){showToast('ثلاثة أيام فقط');return;} schedDays.push(d); }
+  renderDaysPicker();
+}
+function saveSchedule(){
+  if(schedDays.length<1||schedDays.length>3){showToast('اختر من 1 إلى 3 أيام');return;}
+  schedule[schedCat]=[...schedDays].sort((a,b)=>a-b);
+  closeModal('modal-sched'); lsSave(); showToast('✓ تم حفظ جدول '+schedCat); render();
+}
+
+// ADD/EDIT PLAYER
+function populateMonthSelect(sel, def){
+  sel.innerHTML='';
+  for(let i=-2;i<=3;i++){
+    const d=new Date(NOW.getFullYear(),NOW.getMonth()+i,1);
+    const k=mkey(d.getFullYear(),d.getMonth());
+    const o=document.createElement('option');
+    o.value=k; o.textContent=mlabel(k);
+    if(k===(def||curMonth)) o.selected=true;
+    sel.appendChild(o);
+  }
+}
+function updateSchedPreview(){
+  const cat=$('f-cat').value, days=schedule[cat]||[];
+  $('sched-preview-label').textContent=cat;
+  $('sched-preview').innerHTML=days.length?days.map(d=>`<span class="day-badge">${DAYS[d]}</span>`).join(''):'<span style="font-size:10px;color:#555">لم تحدد أيام</span>';
+}
+function openAddPlayer(){
+  editId=null;
+  $('modal-add-title').textContent='إضافة لاعب — '+mlabel(curMonth);
+  ['f-name','f-age','f-dob','f-pno'].forEach(id=>$(id).value='');
+  $('f-cat').value='U8'; $('f-paid').value='0'; $('f-amount').value='20';
+  $('f-delivery').value='0'; $('f-delivery-paid').value='0'; $('f-clothes').value='0'; $('f-clothes-paid').value='0';
+  populateMonthSelect($('f-month'));
+  updateSchedPreview();
+  openModal('modal-add');
+}
+function editPlayer(id){
+  const p=getPlayer(id); if(!p) return;
+  const fee=getMonth(curMonth).fees[id]||{paid:false,amount:p.defaultAmt};
+  editId=id;
+  $('modal-add-title').textContent='تعديل — '+p.name;
+  $('f-name').value=p.name; $('f-cat').value=p.cat; $('f-age').value=p.age||'';
+  $('f-dob').value=p.dob||''; $('f-pno').value=p.pno||'';
+  $('f-amount').value=fee.amount||p.defaultAmt||20;
+  $('f-paid').value=fee.paid?'1':'0';
+  $('f-delivery').value=p.delivery||0; $('f-delivery-paid').value=p.deliveryPaid?'1':'0';
+  $('f-clothes').value=p.clothes||0; $('f-clothes-paid').value=p.clothesPaid?'1':'0';
+  populateMonthSelect($('f-month'), curMonth);
+  updateSchedPreview(); openModal('modal-add');
+}
+function savePlayer(){
+  const name=$('f-name').value.trim(); if(!name){alert('يرجى إدخال الاسم');return;}
+  const cat=$('f-cat').value, age=parseInt($('f-age').value)||0;
+  const dob=$('f-dob').value.trim(), pno=$('f-pno').value.trim();
+  const amount=parseFloat($('f-amount').value)||20, paid=$('f-paid').value==='1';
+  const delivery=parseFloat($('f-delivery').value)||0, deliveryPaid=$('f-delivery-paid').value==='1';
+  const clothes=parseFloat($('f-clothes').value)||0, clothesPaid=$('f-clothes-paid').value==='1';
+  const sm=$('f-month').value;
+  if(editId){
+    const p=getPlayer(editId);
+    if(p) Object.assign(p,{name,cat,age,dob,pno,defaultAmt:amount,delivery,deliveryPaid,clothes,clothesPaid});
+    const m=getMonth(sm); if(!m.fees[editId])m.fees[editId]={};
+    m.fees[editId]={paid,amount};
+    showToast('✓ تم التحديث');
+  } else {
+    const id=nextId++;
+    players.push({id,name,cat,age,dob,pno,defaultAmt:amount,delivery,deliveryPaid,clothes,clothesPaid});
+    const m=getMonth(sm);
+    if(!m.pids.includes(id)) m.pids.push(id);
+    m.fees[id]={paid,amount};
+    showToast('✓ تم إضافة '+name);
+  }
+  closeModal('modal-add'); lsSave(); render();
+}
+function removePlayer(id){
+  if(!confirm('إزالة من هذا الشهر؟')) return;
+  const m=getMonth(curMonth); m.pids=m.pids.filter(x=>x!==id);
+  lsSave(); showToast('تم الإزالة'); render();
+}
+function toggleFee(id){
+  const m=getMonth(curMonth), p=getPlayer(id);
+  if(!m.fees[id]) m.fees[id]={paid:false,amount:p?p.defaultAmt:20};
+  m.fees[id].paid=!m.fees[id].paid;
+  lsSave(); showToast(m.fees[id].paid?'✓ تم تسجيل الدفع':'تم إلغاء الدفع'); render();
+}
+
+// RENEW
+function openRenew(id){
+  renewTarget=id; const p=getPlayer(id); if(!p) return;
+  const nk=nextMkey(curMonth), fee=getMonth(curMonth).fees[id]||{paid:false,amount:p.defaultAmt};
+  $('modal-renew-title').textContent='تجديد — '+p.name;
+  $('modal-renew-body').innerHTML=`
+    <div style="background:#1a1a1a;border-radius:8px;padding:10px;margin-bottom:14px;font-size:11px;color:#888;">
+      تجديد <strong style="color:#fff">${p.name}</strong> للشهر <strong style="color:#1DB954">${mlabel(nk)}</strong>
+    </div>
+    <div class="form-grid">
+      <div class="form-group span2"><label>المبلغ (BD)</label><div class="amount-row"><input id="renew-amount" type="number" step="0.5" value="${fee.amount||20}"><span class="currency">BD</span></div></div>
+      <div class="form-group span2"><label>حالة الدفع</label><select id="renew-paid"><option value="0">لم يدفع بعد</option><option value="1">دفع ✓</option></select></div>
+    </div>`;
+  openModal('modal-renew');
+}
+function confirmRenew(){
+  const id=renewTarget; const p=getPlayer(id); if(!p) return;
+  const nk=nextMkey(curMonth);
+  const amount=parseFloat($('renew-amount').value)||20;
+  const paid=$('renew-paid').value==='1';
+  const m=getMonth(nk);
+  if(!m.pids.includes(id)) m.pids.push(id);
+  m.fees[id]={paid,amount};
+  closeModal('modal-renew'); lsSave();
+  showToast('✓ تم تجديد '+p.name+' لـ '+mlabel(nk)); render();
+}
+
+// ATTENDANCE
+function openAttModal(prefDate){
+  tmpAtt={};
+  $('att-date').value=prefDate||today();
+  $('att-cat').value='all';
+  onAttDateChange(); openModal('modal-att');
+}
+function onAttDateChange(){
+  const d=$('att-date').value; if(!d) return;
+  const cats=catsForDate(curMonth,d);
+  const info=$('att-day-info');
+  if(cats.length){ info.textContent='📅 يوم جدول: '+cats.join(', '); if(cats.length===1)$('att-cat').value=cats[0]; }
+  else info.textContent='⚠ خارج الجدول الأسبوعي';
+  renderAttList();
+}
+function renderAttList(){
+  const cat=$('att-cat').value, d=$('att-date').value;
+  const list=monthPlayers(curMonth).filter(p=>cat==='all'||p.cat===cat);
+  const att=getMonth(curMonth).att[d]||{};
+  list.forEach(p=>{ if(att[p.id]) tmpAtt[p.id]=att[p.id]; });
+  $('att-list').innerHTML=list.map(p=>`
+    <div class="att-row">
+      <div><div class="att-name">${p.name}</div><div class="att-cat">${p.cat} · ${(schedule[p.cat]||[]).map(d=>DAYS3[d]).join('، ')}</div></div>
+      <div class="att-btns">
+        <button class="att-btn${tmpAtt[p.id]==='p'?' present':''}" id="ap-${p.id}" onclick="markOne(${p.id},'p')">✓ حضر</button>
+        <button class="att-btn${tmpAtt[p.id]==='a'?' absent':''}" id="aa-${p.id}" onclick="markOne(${p.id},'a')">✗ غاب</button>
+      </div>
+    </div>`).join('');
+}
+function markOne(id,s){
+  tmpAtt[id]=s;
+  $('ap-'+id).className='att-btn'+(s==='p'?' present':'');
+  $('aa-'+id).className='att-btn'+(s==='a'?' absent':'');
+}
+function markAll(s){ const cat=$('att-cat').value; monthPlayers(curMonth).filter(p=>cat==='all'||p.cat===cat).forEach(p=>markOne(p.id,s)); }
+function saveAttendance(){
+  const d=$('att-date').value||today();
+  const m=getMonth(curMonth); if(!m.att[d])m.att[d]={};
+  let cnt=0; Object.entries(tmpAtt).forEach(([id,s])=>{m.att[d][+id]=s;cnt++;});
+  closeModal('modal-att'); lsSave(); showToast('✓ تم تسجيل '+cnt+' لاعب'); render();
+}
+
+// SESSIONS
+function renderAttTabs(){
+  $('att-tabs').innerHTML=[{k:'all',l:'الكل'},{k:'U8',l:'U8'},{k:'U10',l:'U10'},{k:'U13',l:'U13'}].map(t=>
+    `<button class="tab${attTab===t.k?' active':''}" onclick="setAttTab('${t.k}')">${t.l}</button>`
+  ).join('');
+}
+function setAttTab(c){ attTab=c; renderAttTabs(); renderSessions(); }
+function renderSessions(){
+  $('att-sub').textContent='حضور شهر '+mlabel(curMonth);
+  const m=getMonth(curMonth), asd=allSchedDates(curMonth);
+  const all=[...new Set([...asd,...Object.keys(m.att)])].sort().reverse();
+  if(!all.length){$('sessions-list').innerHTML='<div class="empty">لا توجد جلسات. حدد الجدول الأسبوعي أولاً.</div>';return;}
+  const mp=monthPlayers(curMonth);
+  $('sessions-list').innerHTML=all.filter(d=>{
+    if(attTab==='all') return true;
+    return catsForDate(curMonth,d).includes(attTab)||Object.keys(m.att[d]||{}).some(id=>{const p=getPlayer(+id);return p&&p.cat===attTab;});
+  }).map(d=>{
+    const isSched=asd.includes(d), cats=catsForDate(curMonth,d), att=m.att[d]||{};
+    const plD=mp.filter(p=>cats.includes(p.cat)||att[p.id]);
+    const prs=plD.filter(p=>att[p.id]==='p'), abs=plD.filter(p=>att[p.id]==='a'), pnd=plD.filter(p=>!att[p.id]);
+    const pct=prs.length+abs.length?Math.round(prs.length/(prs.length+abs.length)*100):null;
+    return `<div class="session-card">
+      <div class="session-header">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#fff">📅 ${d} — ${DAYS[new Date(d).getDay()]}</div>
+          <div style="display:flex;gap:4px;margin-top:3px">${cats.map(c=>`<span class="badge ${catClass(c)}">${c}</span>`).join('')}${!isSched?'<span style="font-size:10px;color:#f5a623">خارج الجدول</span>':''}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;color:#888">${pct!==null?prs.length+'/'+(prs.length+abs.length)+' · '+pct+'%':'لم يسجل'}</span>
+          <button class="btn btn-gray btn-sm" onclick="openAttModal('${d}')">تعديل</button>
+        </div>
+      </div>
+      <div class="session-body">
+        ${prs.length?`<div style="margin-bottom:8px"><span style="font-size:10px;color:#888;display:block;margin-bottom:3px">✓ حضر (${prs.length})</span><div style="display:flex;gap:4px;flex-wrap:wrap">${prs.map(p=>`<span class="badge badge-u10">${p.name}</span>`).join('')}</div></div>`:''}
+        ${abs.length?`<div style="margin-bottom:8px"><span style="font-size:10px;color:#888;display:block;margin-bottom:3px">✗ غاب (${abs.length})</span><div style="display:flex;gap:4px;flex-wrap:wrap">${abs.map(p=>`<span class="badge badge-unpaid">${p.name}</span>`).join('')}</div></div>`:''}
+        ${pnd.length&&isSched?`<div><span style="font-size:10px;color:#555;display:block;margin-bottom:3px">⏳ لم يسجل (${pnd.length})</span><div style="display:flex;gap:3px;flex-wrap:wrap">${pnd.map(p=>`<span style="font-size:10px;color:#555;background:#222;padding:2px 6px;border-radius:99px">${p.name}</span>`).join('')}</div></div>`:''} 
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// FEES
+function renderFeesTabs(){
+  $('fees-tabs').innerHTML=[{k:'all',l:'الكل'},{k:'U8',l:'U8'},{k:'U10',l:'U10'},{k:'U13',l:'U13'}].map(t=>
+    `<button class="tab${feesTab===t.k?' active':''}" onclick="setFeesTab('${t.k}')">${t.l}</button>`
+  ).join('');
+}
+function setFeesTab(c){ feesTab=c; renderFeesTabs(); renderFees(); }
+function renderFees(){
+  const m=getMonth(curMonth), list=monthPlayers(curMonth).filter(p=>feesTab==='all'||p.cat===feesTab);
+  const pd=list.filter(p=>m.fees[p.id]&&m.fees[p.id].paid);
+  const upd=list.filter(p=>!m.fees[p.id]||!m.fees[p.id].paid);
+  const tpd=pd.reduce((s,p)=>s+(m.fees[p.id].amount||0),0);
+  const tupd=upd.reduce((s,p)=>s+((m.fees[p.id]&&m.fees[p.id].amount)||p.defaultAmt||0),0);
+  const nk=nextMkey(curMonth), nm=months[nk];
+  $('fees-sub').textContent='شهر '+mlabel(curMonth);
+  $('fees-body').innerHTML=
+    `<div class="stats" style="margin-bottom:16px">
+      <div class="stat"><div class="stat-label">محصّل</div><div class="stat-value" style="font-size:17px">${tpd.toFixed(3)}</div><div class="stat-sub">BD</div></div>
+      <div class="stat red"><div class="stat-label">متبقي</div><div class="stat-value" style="font-size:17px">${tupd.toFixed(3)}</div><div class="stat-sub">BD</div></div>
+      <div class="stat blue"><div class="stat-label">دفعوا</div><div class="stat-value">${pd.length}</div></div>
+      <div class="stat amber"><div class="stat-label">لم يدفعوا</div><div class="stat-value">${upd.length}</div></div>
+    </div>
+    <div class="card"><div class="card-header"><span class="card-title">تفاصيل الرسوم</span><span class="card-count">${list.length} لاعب</span></div>
+    <div class="table-wrap"><table><thead><tr><th>#</th><th>اللاعب</th><th>الفئة</th><th>المبلغ (BD)</th><th>الحالة</th><th>الشهر القادم</th></tr></thead><tbody>
+    ${list.map((p,i)=>{
+      const fee=m.fees[p.id]||{paid:false,amount:p.defaultAmt};
+      const inNext=nm&&nm.pids.includes(p.id);
+      return `<tr>
+        <td style="color:#555;font-size:10px">${i+1}</td>
+        <td><div class="player-name">${p.name}</div>${p.pno?`<div class="player-phone">${p.pno}</div>`:''}</td>
+        <td><span class="badge ${catClass(p.cat)}">${p.cat}</span></td>
+        <td><div class="amount-row" style="gap:4px"><input type="number" step="0.5" value="${fee.amount||0}" style="width:65px;background:#1a1a1a;border:1px solid rgba(255,255,255,0.08);border-radius:5px;padding:4px 6px;color:#f0f0f0;font-size:11px;font-family:Tajawal,sans-serif;direction:ltr" onchange="updateAmount(${p.id},this.value)"><span style="font-size:10px;color:#555">BD</span></div></td>
+        <td><button onclick="toggleFee(${p.id})" class="btn btn-sm ${fee.paid?'btn-green':'btn-gray'}" style="${fee.paid?'':'color:#ff4d4d;border-color:rgba(255,77,77,0.3)'};min-width:78px">${fee.paid?'✓ دفع':'لم يدفع'}</button></td>
+        <td>${inNext?'<span style="font-size:10px;color:#1DB954">✓ مجدد</span>':`<button class="renew-btn" onclick="openRenew(${p.id})">🔄 تجديد</button>`}</td>
+      </tr>`;
+    }).join('')}</tbody></table></div></div>`;
+}
+function updateAmount(id,v){
+  const m=getMonth(curMonth), p=getPlayer(id);
+  if(!m.fees[id]) m.fees[id]={paid:false,amount:p?p.defaultAmt:20};
+  m.fees[id].amount=parseFloat(v)||0; lsSave();
+}
+
+// REPORTS
+function renderRep(){
+  const m=getMonth(curMonth), list=monthPlayers(curMonth);
+  $('rep-sub').textContent='إحصائيات شهر '+mlabel(curMonth);
+  const u8=list.filter(p=>p.cat==='U8').length, u10=list.filter(p=>p.cat==='U10').length, u13=list.filter(p=>p.cat==='U13').length;
+  const paid=list.filter(p=>m.fees[p.id]&&m.fees[p.id].paid).length, tot=list.length||1;
+  const bd=list.reduce((s,p)=>s+(m.fees[p.id]&&m.fees[p.id].paid?(m.fees[p.id].amount||0):0),0);
+  const asd=allSchedDates(curMonth);
+  const avg=p=>{ const t=asd.filter(d=>m.att[d]&&m.att[d][p.id]).length; if(!t)return 0; return Math.round(asd.filter(d=>m.att[d]&&m.att[d][p.id]==='p').length/t*100); };
+  const top=[...list].filter(p=>asd.some(d=>m.att[d]&&m.att[d][p.id])).sort((a,b)=>avg(b)-avg(a)).slice(0,5);
+  $('rep-body').innerHTML=
+    `<div class="report-card" style="grid-column:1/-1"><h3>توزيع اللاعبين</h3>
+      <div class="bar-row"><div class="bar-label">U8</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(u8/tot*100)}%;background:#4a90e2"></div></div><div class="bar-val">${u8}</div></div>
+      <div class="bar-row"><div class="bar-label">U10</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(u10/tot*100)}%"></div></div><div class="bar-val">${u10}</div></div>
+      <div class="bar-row"><div class="bar-label">U13</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(u13/tot*100)}%;background:#f5a623"></div></div><div class="bar-val">${u13}</div></div>
+    </div>
+    <div class="report-card"><h3>الرسوم</h3>
+      <div class="fee-row">
+        <div class="fee-box"><div class="fee-num" style="color:#1DB954">${paid}</div><div class="fee-lbl">دفعوا</div></div>
+        <div class="fee-box"><div class="fee-num" style="color:#ff4d4d">${tot-paid}</div><div class="fee-lbl">لم يدفعوا</div></div>
+        <div class="fee-box"><div class="fee-num" style="font-size:14px;color:#f5a623">${bd.toFixed(3)}</div><div class="fee-lbl">BD</div></div>
+      </div>
+      <div class="bar-row"><div class="bar-label" style="width:65px">مدفوع</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(paid/tot*100)}%"></div></div><div class="bar-val">${Math.round(paid/tot*100)}%</div></div>
+      <div class="bar-row"><div class="bar-label" style="width:65px">معلق</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round((tot-paid)/tot*100)}%;background:#ff4d4d"></div></div><div class="bar-val">${Math.round((tot-paid)/tot*100)}%</div></div>
+    </div>
+    <div class="report-card" style="grid-column:1/-1"><h3>أعلى حضوراً</h3>
+      ${top.length?top.map(p=>`<div class="bar-row"><div class="bar-label" style="width:130px;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div><div class="bar-track"><div class="bar-fill" style="width:${avg(p)}%"></div></div><div class="bar-val">${avg(p)}%</div></div>`).join(''):'<p style="color:#555;font-size:11px">سجّل حضوراً أولاً</p>'}
+    </div>`;
+}
+
+
+// ADMIN
+function renderAdmin(){
+  const asd = allSchedDates(curMonth);
+  const m = getMonth(curMonth);
+  const list = monthPlayers(curMonth);
+
+  // delivery stats
+  const hasDelivery = list.filter(p=>p.delivery>0);
+  const deliveryPaid = hasDelivery.filter(p=>p.deliveryPaid);
+  const deliveryTotal = deliveryPaid.reduce((s,p)=>s+(p.delivery||0),0);
+  const clothesList = list.filter(p=>p.clothes>0);
+  const clothesPaid = clothesList.filter(p=>p.clothesPaid);
+  const clothesTotal = clothesPaid.reduce((s,p)=>s+(p.clothes||0),0);
+
+  $('admin-body').innerHTML = `
+    <div class="stats" style="margin-bottom:20px">
+      <div class="stat blue"><div class="stat-label">توصيل محصّل</div><div class="stat-value" style="font-size:17px">${deliveryTotal.toFixed(3)}</div><div class="stat-sub">BD · ${deliveryPaid.length}/${hasDelivery.length}</div></div>
+      <div class="stat amber"><div class="stat-label">ملابس محصّلة</div><div class="stat-value" style="font-size:17px">${clothesTotal.toFixed(3)}</div><div class="stat-sub">BD · ${clothesPaid.length}/${clothesList.length}</div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-header"><span class="card-title">الملاعب المحجوزة</span><span class="card-count">${asd.length} يوم تدريب</span></div>
+      <div class="table-wrap"><table><thead><tr><th>التاريخ</th><th>اليوم</th><th>الفئات</th><th>عدد الملاعب</th></tr></thead><tbody>
+      ${asd.map(d=>{
+        const cats=catsForDate(curMonth,d);
+        const courts=fields.courtsPerDay[d]||0;
+        return \`<tr>
+          <td style="font-weight:600">\${d}</td>
+          <td style="color:#888">\${DAYS[new Date(d).getDay()]}</td>
+          <td>\${cats.map(c=>\`<span class="badge \${catClass(c)}">\${c}</span>\`).join(' ')}</td>
+          <td><input type="number" min="0" max="20" value="\${courts}" style="width:60px;background:#1a1a1a;border:1px solid rgba(255,255,255,0.08);border-radius:5px;padding:4px 6px;color:#f0f0f0;font-size:12px;font-family:Tajawal,sans-serif;text-align:center" onchange="setCourts('\${d}',this.value)"></td>
+        </tr>\`;
+      }).join('')}
+      </tbody></table></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-title">التوصيل والملابس</span><span class="card-count">${list.length} لاعب</span></div>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>اللاعب</th><th>الفئة</th><th>التوصيل</th><th>دفع التوصيل</th><th>الملابس</th><th>دفع الملابس</th></tr></thead><tbody>
+      ${list.filter(p=>p.delivery>0||p.clothes>0).map((p,i)=>`<tr>
+        <td style="color:#555;font-size:10px">${i+1}</td>
+        <td><div class="player-name">${p.name}</div></td>
+        <td><span class="badge ${catClass(p.cat)}">${p.cat}</span></td>
+        <td style="color:#4a90e2">${p.delivery?p.delivery.toFixed(3)+' BD':'—'}</td>
+        <td>${p.delivery>0?(p.deliveryPaid?'<span class="badge badge-paid">دفع ✓</span>':'<span class="badge badge-unpaid">لم يدفع</span>'):'—'}</td>
+        <td style="color:#f5a623">${p.clothes?p.clothes.toFixed(3)+' BD':'—'}</td>
+        <td>${p.clothes>0?(p.clothesPaid?'<span class="badge badge-paid">دفع ✓</span>':'<span class="badge badge-unpaid">لم يدفع</span>'):'—'}</td>
+      </tr>`).join('') || '<tr><td colspan="7" class="empty">لا يوجد توصيل أو ملابس مسجلة</td></tr>'}
+      </tbody></table></div>
+    </div>`;
+}
+function setCourts(date, val){
+  fields.courtsPerDay[date] = parseInt(val)||0;
+  lsSave(); showToast('✓ تم حفظ عدد الملاعب');
+}
+
+// EXCEL
+function exportExcel(){
+  if(typeof XLSX==='undefined'){
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.onload=doExport; s.onerror=()=>alert('تعذر تحميل مكتبة Excel');
+    document.head.appendChild(s); showToast('جاري تحميل Excel...');
+  } else doExport();
+}
+function doExport(){
+  const m=getMonth(curMonth), list=monthPlayers(curMonth), lb=mlabel(curMonth);
+  const wb=XLSX.utils.book_new(), asd=allSchedDates(curMonth);
+  const ah=['#','الاسم','الفئة','رقم ولي الأمر','العمر',...asd,'الحضور','الغياب','نسبة %'];
+  const ar=list.map((p,i)=>{ const row=[i+1,p.name,p.cat,p.pno||'',p.age||'']; let pr=0,ab=0; asd.forEach(d=>{const s=m.att[d]&&m.att[d][p.id];row.push(s==='p'?'حضر':s==='a'?'غاب':'—');if(s==='p')pr++;if(s==='a')ab++;});const t=pr+ab;row.push(pr,ab,t?Math.round(pr/t*100)+'%':'—');return row; });
+  const aw=XLSX.utils.aoa_to_sheet([ah,...ar]); aw['!cols']=[{wch:4},{wch:22},{wch:6},{wch:13},{wch:5},...asd.map(()=>({wch:10})),{wch:8},{wch:8},{wch:9}];
+  XLSX.utils.book_append_sheet(wb,aw,'كشف الحضور');
+  const fh=['#','الاسم','الفئة','رقم ولي الأمر','جدول التدريب','المبلغ (BD)','حالة الدفع'];
+  const fr=list.map((p,i)=>{ const fee=m.fees[p.id]||{paid:false,amount:p.defaultAmt}; return[i+1,p.name,p.cat,p.pno||'',(schedule[p.cat]||[]).map(d=>DAYS[d]).join(' / '),fee.amount||0,fee.paid?'مدفوع':'غير مدفوع']; });
+  const tpd=list.filter(p=>m.fees[p.id]&&m.fees[p.id].paid).reduce((s,p)=>s+(m.fees[p.id].amount||0),0);
+  fr.push(['','','','','','الإجمالي:',tpd.toFixed(3)+' BD']);
+  const fw=XLSX.utils.aoa_to_sheet([fh,...fr]); fw['!cols']=[{wch:4},{wch:22},{wch:6},{wch:13},{wch:18},{wch:14},{wch:13}];
+  XLSX.utils.book_append_sheet(wb,fw,'الرسوم');
+  XLSX.writeFile(wb,'BFIT_'+lb.replace(' ','_')+'.xlsx');
+  showToast('✓ تم تحميل Excel');
+}
+
+// INIT
+updateMonthDisplay();
+renderDash();
+</script>
+</body>
+</html>
